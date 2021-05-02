@@ -10,19 +10,19 @@
       file:
         path: "{{ item }}"
         state: directory
-        owner: vagrant
-        group: vagrant
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: 0775
       loop:
-        - /home/vagrant/git-server
-        - /home/vagrant/git-server/keys
-        - /home/vagrant/git-server/repos
+        - "/home/{{ ansible_user }}/git-server"
+        - "/home/{{ ansible_user }}/git-server/keys"
+        - "/home/{{ ansible_user }}/git-server/repos"
     - name: Set up public key
       copy:
         src: "{{ publicKeyLocation }}"
-        dest: /home/vagrant/git-server/keys
-        owner: vagrant
-        group: vagrant
+        dest: "/home/{{ ansible_user }}/git-server/keys"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: 0644
     - name: Run Git server in a Docker container
       docker_container:
@@ -30,8 +30,29 @@
         image: jkarlos/git-server-docker
         state: started
         volumes:
-          - /home/vagrant/git-server/keys:/git-server/keys
-          - /home/vagrant/git-server/repos:/git-server/repos
+          - "/home/{{ ansible_user }}/git-server/keys:/git-server/keys"
+          - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
         ports:
           - "2222:22"
 
+- name: Install Docker registry
+  hosts: vcs_and_docker_registry
+  tasks:
+    - name: Create necessary folder for Docker registry
+      file:
+        path: "/home/{{ ansible_user }}/docker-registry"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0775
+    - name: Run Docker registry in a container
+      become: yes
+      docker_container:
+        name: docker-registry
+        image: registry:2
+        state: started
+        restart: yes
+        volumes:
+          - "/home/{{ ansible_user }}/docker-registry:/var/lib/registry"
+        ports:
+          - "5000:5000"
