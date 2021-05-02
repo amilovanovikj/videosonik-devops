@@ -1,0 +1,4 @@
+# variables for the instance11 host
+
+ansible_host: 192.168.32.11
+ansible_private_key_file: ./.vagrant/machines/instance11/virtualbox/private_key

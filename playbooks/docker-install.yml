@@ -1,0 +1,27 @@
+---
+- name: Install Docker on all machines
+  hosts: all
+  roles:
+    - geerlingguy.docker
+
+- name: Install Pip Docker on build servers
+  hosts: build
+
+  tasks:
+    - name: Install setuptools
+      become: yes
+      yum:
+        name: python-setuptools
+        state: latest
+    - name: Install EPEL
+      become: yes
+      import_role:
+        name: geerlingguy.repo-epel           # EPEL is needed for pip role
+    - name: Install pip and pip Docker
+      become: yes
+      import_role:
+        name: geerlingguy.pip                 # Pip is needed for building Docker images
+      vars:
+        pip_package: python3-pip
+        pip_install_packages:
+          - name: docker

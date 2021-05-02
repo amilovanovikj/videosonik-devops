@@ -1,0 +1,14 @@
+[database]
+instance11
+
+[backend]
+instance12
+
+[frontend]
+instance13
+
+[vcs-and-docker-registry]
+instance14
+
+[build]
+instance15
