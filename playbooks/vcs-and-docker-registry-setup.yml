@@ -1,3 +1,37 @@
 ---
 - name: Install Git server
-  hosts: vcs-and-docker-registry
+  hosts: vcs_and_docker_registry
+  vars_prompt:
+    - name: "publicKeyLocation"
+      prompt: "Enter the location of the public ssh key you want to use for connecting to the Git server"
+      private: no
+  tasks:
+    - name: Create necessary folders for Git server
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: 0775
+      loop:
+        - /home/vagrant/git-server
+        - /home/vagrant/git-server/keys
+        - /home/vagrant/git-server/repos
+    - name: Set up public key
+      copy:
+        src: "{{ publicKeyLocation }}"
+        dest: /home/vagrant/git-server/keys
+        owner: vagrant
+        group: vagrant
+        mode: 0644
+    - name: Run Git server in a Docker container
+      docker_container:
+        name: git-server
+        image: jkarlos/git-server-docker
+        state: started
+        volumes:
+          - /home/vagrant/git-server/keys:/git-server/keys
+          - /home/vagrant/git-server/repos:/git-server/repos
+        ports:
+          - "2222:22"
+
