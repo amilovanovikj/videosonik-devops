@@ -1,0 +1,4 @@
+{
+  "insecure-registries" : ["{{ hostvars[groups['vcs_and_docker_registry'][0]]['ansible_host'] }}:5000"],
+  "live-restore": true
+}

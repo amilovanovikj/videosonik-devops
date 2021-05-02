@@ -1,0 +1,68 @@
+---
+- name: Configure build server with Git
+  hosts: build
+  tasks:
+    - name: Install Git
+      import_role:
+        name: geerlingguy.git
+      vars:
+        git_install_from_source: true
+        git_version: "2.30.0"
+        git_install_from_source_force_update: true
+    - name: Generate SSH key
+      openssh_keypair:
+        path: "/home/{{ ansible_user }}/.ssh/build_server"
+        size: 2048
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+    - name: Template SSH config
+      template:
+        src: config.j2
+        dest: "/home/{{ ansible_user }}/.ssh/config"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
+    - name: Fetch SSH key from build server
+      fetch:
+        src: "/home/{{ ansible_user }}/.ssh/build_server.pub"
+        dest: buffer/
+        flat: yes
+
+- name: Set up SSH to remote Git server
+  hosts: vcs_and_docker_registry
+  tasks:
+    - name: Copy SSH key to Git server
+      copy:
+        src: buffer/build_server.pub
+        dest: "/home/{{ ansible_user }}/git-server/keys/build_server.pub"
+    - name: Restart the Docker container of the Git server
+      docker_container:
+        name: git-server
+        image: jkarlos/git-server-docker
+        state: started
+        restart: yes
+        volumes:
+          - "/home/{{ ansible_user }}/git-server/keys:/git-server/keys"
+          - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
+        ports:
+          - "2222:22"
+    - name: Clean up Ansible master
+      file:
+        path: buffer/
+        state: absent
+      delegate_to: 127.0.0.1
+
+- name: Configure build server with Docker registry
+  hosts: build
+  tasks:
+    - name: Enable insecure communication with Docker registry
+      template:
+        src: daemon.json.j2
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: 0664
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted

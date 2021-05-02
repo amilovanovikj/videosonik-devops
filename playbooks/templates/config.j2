@@ -1,0 +1,4 @@
+Host {{ hostvars[groups['vcs_and_docker_registry'][0]]['ansible_host'] }}
+    Hostname {{ hostvars[groups['vcs_and_docker_registry'][0]]['ansible_host'] }}
+    IdentityFile /home/{{ ansible_user }}/.ssh/build_server
+    IdentitiesOnly yes
