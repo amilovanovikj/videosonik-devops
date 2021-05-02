@@ -51,7 +51,6 @@
         name: docker-registry
         image: registry:2
         state: started
-        restart: yes
         volumes:
           - "/home/{{ ansible_user }}/docker-registry:/var/lib/registry"
         ports:
