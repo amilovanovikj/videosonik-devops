@@ -7,7 +7,7 @@ instance12
 [frontend]
 instance13
 
-[vcs_and_docker_registry]
+[repository]
 instance14
 
 [build]

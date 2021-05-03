@@ -1,6 +1,6 @@
 ---
 - name: Restart Docker containers
-  hosts: vcs_and_docker_registry
+  hosts: repository
   tasks:
     - name: Restart the Docker container of the Git server
       docker_container:

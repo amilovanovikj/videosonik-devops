@@ -1,6 +1,6 @@
 ---
 - name: Install Git server
-  hosts: vcs_and_docker_registry
+  hosts: repository
   vars_prompt:
     - name: "publicKeyLocation"
       prompt: "Enter the location of the public ssh key you want to use for connecting to the Git server"
@@ -36,7 +36,7 @@
           - "2222:22"
 
 - name: Install Docker registry
-  hosts: vcs_and_docker_registry
+  hosts: repository
   tasks:
     - name: Create necessary folder for Docker registry
       file:

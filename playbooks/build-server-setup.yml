@@ -29,7 +29,7 @@
         flat: yes
 
 - name: Set up SSH to remote Git server
-  hosts: vcs_and_docker_registry
+  hosts: repository
   tasks:
     - name: Copy SSH key to Git server
       copy:
