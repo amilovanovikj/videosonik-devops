@@ -35,6 +35,14 @@
       copy:
         src: buffer/build_server.pub
         dest: "/home/{{ ansible_user }}/git-server/keys/build_server.pub"
+      notify:
+        - Restart the Docker container of the Git server
+    - name: Clean up Ansible master
+      file:
+        path: buffer/
+        state: absent
+      delegate_to: 127.0.0.1
+  handlers:
     - name: Restart the Docker container of the Git server
       docker_container:
         name: git-server
@@ -46,11 +54,6 @@
           - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
         ports:
           - "2222:22"
-    - name: Clean up Ansible master
-      file:
-        path: buffer/
-        state: absent
-      delegate_to: 127.0.0.1
 
 - name: Configure build server with Docker registry
   hosts: build
@@ -62,6 +65,9 @@
         owner: root
         group: root
         mode: 0664
+      notify: 
+        - Restart Docker
+  handlers:
     - name: Restart Docker
       service:
         name: docker
