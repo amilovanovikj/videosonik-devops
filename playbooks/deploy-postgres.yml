@@ -1,0 +1,27 @@
+---
+- name: Deploy the Postgres database
+  hosts: database
+  tasks:
+    - name: Create necessary folder for Docker volume
+      file:
+        path: "/home/{{ ansible_user }}/postgresql/data"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0775
+    - name: Load Postgres configuration variables from encrypted file
+      include_vars:
+        file: vault/database-config.yml
+    - name: Run Postgres in Docker container
+      docker_container:
+        name: postgres
+        image: postgres:11
+        state: started
+        volumes:
+          - "/home/{{ ansible_user }}/postgresql/data:/var/lib/postgresql/data"
+        ports:
+          - "5432:5432"
+        env:
+          POSTGRES_USER: "{{ postgres_user }}"
+          POSTGRES_PASSWORD: "{{ postgres_pass }}"
+          POSTGRES_DB: "{{ database_name }}"
