@@ -4,10 +4,6 @@
   become: yes
 
   tasks:
-    - name: Install setuptools
-      yum:
-        name: python-setuptools
-        state: latest
     - name: Install EPEL
       import_role:
         name: geerlingguy.repo-epel           # EPEL is needed for pip role
@@ -18,6 +14,10 @@
         pip_package: python-pip
         pip_install_packages:
           - name: docker-py
+    - name: Install setuptools
+      yum:
+        name: python-setuptools
+        state: latest
     - name: Install Docker
       import_role:
         name: geerlingguy.docker
