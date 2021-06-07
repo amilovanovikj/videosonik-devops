@@ -33,6 +33,13 @@
         source: build
       vars:
         ansible_python_interpreter: /bin/python3
+    - name: Remove Docker image
+      docker_image:
+        state: absent
+        name: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000/videosonik-backend"
+        tag: latest
+      vars:
+        ansible_python_interpreter: /bin/python3
   handlers:
     - name: Clean workspace
       file:
