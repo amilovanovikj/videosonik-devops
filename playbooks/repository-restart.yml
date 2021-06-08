@@ -1,5 +1,5 @@
 ---
-- name: Restart Docker containers
+- name: Restart repository Docker containers
   hosts: repository
   tasks:
     - name: Restart the Docker container of the Git server

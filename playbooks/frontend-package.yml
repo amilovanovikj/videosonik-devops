@@ -1,0 +1,37 @@
+---
+- name: Build FE Docker image and push to Docker registry
+  hosts: build
+  force_handlers: yes
+  tasks:
+    - name: Git checkout
+      git:
+        repo: "ssh://git@{{ hostvars[groups['repository'][0]]['ansible_host'] }}:2222/git-server/repos/videosonik-frontend.git"
+        dest: "/home/{{ ansible_user }}/videosonik-frontend"
+        key_file: /home/{{ ansible_user }}/.ssh/build_server
+        accept_hostkey: yes
+        version: master
+      notify: 
+        - Clean workspace
+    - name: Build an image and push it to a private repo
+      docker_image:
+        build:
+          path: /home/{{ ansible_user }}/videosonik-frontend
+          pull: yes
+        name: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000/videosonik-frontend"
+        tag: latest
+        push: yes
+        source: build
+      vars:
+        ansible_python_interpreter: /bin/python3
+    - name: Remove Docker image
+      docker_image:
+        state: absent
+        name: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000/videosonik-frontend"
+        tag: latest
+      vars:
+        ansible_python_interpreter: /bin/python3
+  handlers:
+    - name: Clean workspace
+      file:
+        path: /home/{{ ansible_user }}/videosonik-frontend
+        state: absent
