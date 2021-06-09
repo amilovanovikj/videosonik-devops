@@ -21,3 +21,24 @@
     - name: Install Docker
       import_role:
         name: geerlingguy.docker
+
+- name: Configure servers with Docker registry
+  hosts:
+    - frontend
+    - backend
+    - build
+  tasks:
+    - name: Enable insecure communication with Docker registry
+      template:
+        src: daemon.json.j2
+        dest: /etc/docker/daemon.json
+        owner: root
+        group: root
+        mode: 0664
+      notify: 
+        - Restart Docker
+  handlers:
+    - name: Restart Docker
+      service:
+        name: docker
+        state: restarted
