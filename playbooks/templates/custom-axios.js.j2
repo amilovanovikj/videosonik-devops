@@ -1,0 +1,10 @@
+import axios from 'axios';
+
+const instance = axios.create({
+    baseURL: "http://{{ hostvars[groups['backend'][0]]['ansible_host'] }}:8080",
+    headers: {
+        'Access-Control-Allow-Origin': '*'
+    },
+});
+
+export default instance;
