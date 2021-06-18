@@ -1,1 +1,5 @@
 # variables for the backend group
+
+workspace: "/home/{{ ansible_user }}/videosonik-backend"
+service_name: videosonik-backend
+service_port: 8080

@@ -1,0 +1,36 @@
+---
+- name: Deploy the FE service
+  hosts: frontend
+  vars:
+    num_containers: 2
+  tasks:
+    - name: Create a folder for the app
+      file:
+        path: "{{ workspace }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0775
+    - name: Copy the docker-compose file
+      template:
+        src: docker-compose.yml.j2
+        dest: "{{ workspace }}/docker-compose.yml"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0644
+    - name: Copy the nginx load balancer config
+      template:
+        src: nginx.conf.j2
+        dest: "{{ workspace }}/nginx.conf"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0644
+    - name: Docker compose up
+      docker_compose:
+        project_src: "{{ workspace }}"
+        state: present
+        pull: yes
+        restarted: yes
+        recreate: always
+        scale: 
+          videosonik-frontend: "{{ num_containers }}"

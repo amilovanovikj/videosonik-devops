@@ -9,13 +9,6 @@
         git_install_from_source: true
         git_version: "2.30.0"
         git_install_from_source_force_update: true
-    - name: Install pip3 and pip3 Docker
-      import_role:
-        name: geerlingguy.pip
-      vars:
-        pip_package: python3-pip
-        pip_install_packages:
-          - name: docker
     - name: Generate SSH key
       openssh_keypair:
         path: "{{ git_key_file }}"
@@ -61,3 +54,5 @@
           - "{{ git_repos_folder }}:/git-server/repos"
         ports:
           - "2222:22"
+      vars:
+        ansible_python_interpreter: /bin/python3

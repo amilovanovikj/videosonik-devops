@@ -1,23 +1,30 @@
 ---
 - name: Install Docker on all servers
   hosts: all
-  become: yes
 
   tasks:
     - name: Install EPEL
       import_role:
         name: geerlingguy.repo-epel           # EPEL is needed for pip role
-    - name: Install pip and pip Docker
+    - name: Install setuptools
+      yum:
+        name: python-setuptools
+        state: latest
+    - name: Install pip and pip Docker compose
       import_role:
         name: geerlingguy.pip                 # Pip is needed for Docker
       vars:
         pip_package: python-pip
         pip_install_packages:
-          - name: docker-py
-    - name: Install setuptools
-      yum:
-        name: python-setuptools
-        state: latest
+          - name: docker-compose
+            version: 1.7.0
+    - name: Install pip3 and pip3 Docker
+      import_role:
+        name: geerlingguy.pip                 # Pip is needed for Docker
+      vars:
+        pip_package: python3-pip
+        pip_install_packages:
+          - name: docker
     - name: Install Docker
       import_role:
         name: geerlingguy.docker

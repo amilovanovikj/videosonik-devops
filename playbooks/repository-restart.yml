@@ -13,6 +13,8 @@
           - "{{ git_repos_folder }}:/git-server/repos"
         ports:
           - "2222:22"
+      vars:
+        ansible_python_interpreter: /bin/python3
     - name: Restart the Docker container of the Docker registry
       become: yes
       docker_container:
@@ -24,3 +26,5 @@
           - "/home/{{ ansible_user }}/docker-registry:/var/lib/registry"
         ports:
           - "5000:5000"
+      vars:
+        ansible_python_interpreter: /bin/python3

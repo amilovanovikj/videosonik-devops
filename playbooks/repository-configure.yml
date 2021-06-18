@@ -34,6 +34,8 @@
         - "{{ git_repos_folder }}"
         ports:
           - "2222:22"
+      vars:
+        ansible_python_interpreter: /bin/python3
 
 - name: Install Docker registry
   hosts: repository
@@ -55,3 +57,5 @@
           - "/home/{{ ansible_user }}/docker-registry:/var/lib/registry"
         ports:
           - "5000:5000"
+      vars:
+        ansible_python_interpreter: /bin/python3

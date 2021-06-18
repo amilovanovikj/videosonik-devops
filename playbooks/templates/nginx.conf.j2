@@ -1,13 +1,13 @@
-user  nginx;
+user nginx;
 
 events {
-    worker_connections   1000;
+    worker_connections 1024;
 }
 http {
-        server {
-              listen 4000;
-              location / {
-                proxy_pass http://{{ service_url }}:{{ service_port }};
-              }
-        }
+  server {
+    listen 4000;
+    location / {
+      proxy_pass http://{{ service_name }}:{{ service_port }};
+    }
+  }
 }
