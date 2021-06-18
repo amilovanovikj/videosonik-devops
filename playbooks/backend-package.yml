@@ -29,7 +29,7 @@
         build:
           path: /home/{{ ansible_user }}/videosonik-backend
           pull: yes
-        name: "{{ docker_repo_url }}/videosonik-backend"
+        name: "{{ docker_registry_url }}/videosonik-backend"
         tag: latest
         push: yes
         source: build
@@ -38,7 +38,7 @@
     - name: Remove Docker image
       docker_image:
         state: absent
-        name: "{{ docker_repo_url }}/videosonik-backend"
+        name: "{{ docker_registry_url }}/videosonik-backend"
         tag: latest
       vars:
         ansible_python_interpreter: /bin/python3
