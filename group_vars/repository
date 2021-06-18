@@ -1,1 +1,5 @@
 # variables for the repository group
+
+git_server_folder: "/home/{{ ansible_user }}/git-server"
+git_keys_folder: "/home/{{ ansible_user }}/git-server/keys"
+git_repos_folder: "/home/{{ ansible_user }}/git-server/repos"

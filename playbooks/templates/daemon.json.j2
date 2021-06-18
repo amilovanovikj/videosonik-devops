@@ -1,4 +1,4 @@
 {
-  "insecure-registries" : ["{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000"],
+  "insecure-registries" : ["{{ docker_repo_url }}"],
   "live-restore": true
 }

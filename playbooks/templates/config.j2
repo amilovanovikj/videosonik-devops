@@ -1,4 +1,4 @@
 Host {{ hostvars[groups['repository'][0]]['ansible_host'] }}
     Hostname {{ hostvars[groups['repository'][0]]['ansible_host'] }}
-    IdentityFile /home/{{ ansible_user }}/.ssh/build_server
+    IdentityFile {{ git_key_file }}
     IdentitiesOnly yes

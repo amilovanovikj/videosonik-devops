@@ -1,3 +1,5 @@
 # variables for the group 'all'
 
 ansible_user: vagrant
+git_server_url: "ssh://git@{{ hostvars[groups['repository'][0]]['ansible_host'] }}:2222/git-server/repos"
+docker_repo_url: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000"

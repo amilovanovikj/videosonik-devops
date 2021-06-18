@@ -9,8 +9,8 @@
         state: started
         restart: yes
         volumes:
-          - "/home/{{ ansible_user }}/git-server/keys:/git-server/keys"
-          - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
+          - "{{ git_keys_folder }}:/git-server/keys"
+          - "{{ git_repos_folder }}:/git-server/repos"
         ports:
           - "2222:22"
     - name: Restart the Docker container of the Docker registry

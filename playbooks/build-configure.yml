@@ -18,7 +18,7 @@
           - name: docker
     - name: Generate SSH key
       openssh_keypair:
-        path: "/home/{{ ansible_user }}/.ssh/build_server"
+        path: "{{ git_key_file }}"
         size: 2048
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -31,8 +31,8 @@
         mode: 0600
     - name: Fetch SSH key from build server
       fetch:
-        src: "/home/{{ ansible_user }}/.ssh/build_server.pub"
-        dest: buffer/
+        src: "{{ git_key_file }}.pub"
+        dest: buffer/build_server.pub
         flat: yes
 
 - name: Set up SSH to remote Git server
@@ -41,7 +41,7 @@
     - name: Copy SSH key to Git server
       copy:
         src: buffer/build_server.pub
-        dest: "/home/{{ ansible_user }}/git-server/keys/build_server.pub"
+        dest: "{{ git_keys_folder }}/build_server.pub"
       notify:
         - Restart the Docker container of the Git server
     - name: Clean up Ansible master
@@ -57,7 +57,7 @@
         state: started
         restart: yes
         volumes:
-          - "/home/{{ ansible_user }}/git-server/keys:/git-server/keys"
-          - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
+          - "{{ git_keys_folder }}:/git-server/keys"
+          - "{{ git_repos_folder }}:/git-server/repos"
         ports:
           - "2222:22"

@@ -3,15 +3,17 @@
   hosts: build
   force_handlers: yes
   tasks:
+    - name: Clean workspace
+      file:
+        path: /home/{{ ansible_user }}/videosonik-backend
+        state: absent
     - name: Git checkout
       git:
-        repo: "ssh://git@{{ hostvars[groups['repository'][0]]['ansible_host'] }}:2222/git-server/repos/videosonik-backend.git"
+        repo: "{{ git_server_url }}/videosonik-backend.git"
         dest: "/home/{{ ansible_user }}/videosonik-backend"
-        key_file: /home/{{ ansible_user }}/.ssh/build_server
+        key_file: "{{ git_key_file }}"
         accept_hostkey: yes
         version: master
-      notify: 
-        - Clean workspace
     - name: Load Postgres configuration variables from encrypted file
       include_vars:
         file: vault/database-config.yml
@@ -27,7 +29,7 @@
         build:
           path: /home/{{ ansible_user }}/videosonik-backend
           pull: yes
-        name: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000/videosonik-backend"
+        name: "{{ docker_repo_url }}/videosonik-backend"
         tag: latest
         push: yes
         source: build
@@ -36,12 +38,7 @@
     - name: Remove Docker image
       docker_image:
         state: absent
-        name: "{{ hostvars[groups['repository'][0]]['ansible_host'] }}:5000/videosonik-backend"
+        name: "{{ docker_repo_url }}/videosonik-backend"
         tag: latest
       vars:
         ansible_python_interpreter: /bin/python3
-  handlers:
-    - name: Clean workspace
-      file:
-        path: /home/{{ ansible_user }}/videosonik-backend
-        state: absent

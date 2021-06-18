@@ -14,13 +14,13 @@
         group: "{{ ansible_user }}"
         mode: 0775
       loop:
-        - "/home/{{ ansible_user }}/git-server"
-        - "/home/{{ ansible_user }}/git-server/keys"
-        - "/home/{{ ansible_user }}/git-server/repos"
+        - "{{ git_server_folder }}"
+        - "{{ git_keys_folder }}"
+        - "{{ git_repos_folder }}"
     - name: Set up public key
       copy:
         src: "{{ publicKeyLocation }}"
-        dest: "/home/{{ ansible_user }}/git-server/keys"
+        dest: "{{ git_keys_folder }}"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: 0644
@@ -30,8 +30,8 @@
         image: jkarlos/git-server-docker
         state: started
         volumes:
-          - "/home/{{ ansible_user }}/git-server/keys:/git-server/keys"
-          - "/home/{{ ansible_user }}/git-server/repos:/git-server/repos"
+        - "{{ git_keys_folder }}"
+        - "{{ git_repos_folder }}"
         ports:
           - "2222:22"
 
