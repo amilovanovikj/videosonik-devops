@@ -1,0 +1,14 @@
+version: "2"
+
+services:
+  videosonik-backend:
+    image: "{{ docker_registry_url }}/videosonik-backend:latest"
+  
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - videosonik-backend
+    ports:
+      - "4000:4000"
