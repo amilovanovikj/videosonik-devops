@@ -7,14 +7,17 @@ spring.datasource.url=jdbc:postgresql://{{ hostvars[groups['database'][0]]['ansi
 spring.datasource.username={{ postgres_user }}
 spring.datasource.password={{ postgres_pass }}
 
-# Compression
+## Compression
 server.compression.enabled=true
 server.compression.mime-types=text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
 server.compression.min-response-size=1024
-#Caching
+## Caching
 spring.resources.cache.cachecontrol.max-age=120
 
-
+## Admin user configuration
+admin.username={{ admin_username }}
+admin.password={{ admin_password }}
+admin.email={{ admin_email }}
 
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQL95Dialect
 spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
