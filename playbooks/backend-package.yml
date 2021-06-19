@@ -3,6 +3,9 @@
   hosts: build
   force_handlers: yes
   tasks:
+    - name: Load secret variables from encrypted file
+      include_vars:
+        file: vault/database-config.yml
     - name: Clean workspace
       file:
         path: /home/{{ ansible_user }}/videosonik-backend
@@ -14,9 +17,6 @@
         key_file: "{{ git_key_file }}"
         accept_hostkey: yes
         version: master
-    - name: Load Postgres configuration variables from encrypted file
-      include_vars:
-        file: vault/database-config.yml
     - name: Template application.properties
       template:
         src: application.properties.j2
