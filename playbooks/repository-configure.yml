@@ -1,10 +1,30 @@
 ---
+- name: Generate SSH key on local machine for Git servers
+  hosts: localhost
+  vars_prompt:
+    - name: "ssh_key_name"
+      prompt: "Enter the name of the SSH key for connecting to the Git server"
+      private: no
+  tasks:
+    - name: Generate SSH key
+      openssh_keypair:
+        path: "/home/{{ ansible_user }}/.ssh/{{ ssh_key_name }}"
+        size: 2048
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+    - name: Template SSH config
+      template:
+        src: config.j2
+        dest: "/home/{{ ansible_user }}/.ssh/config"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: 0600
+    - name: Set SSH key name as host variable
+      set_fact:
+        local_public_key_location: "/home/{{ ansible_user }}/.ssh/{{ ssh_key_name }}.pub"
+
 - name: Install Git server
   hosts: repository
-  vars_prompt:
-    - name: "publicKeyLocation"
-      prompt: "Enter the location of the public ssh key you want to use for connecting to the Git server"
-      private: no
   tasks:
     - name: Create necessary folders for Git server
       file:
@@ -19,7 +39,7 @@
         - "{{ git_repos_folder }}"
     - name: Set up public key
       copy:
-        src: "{{ publicKeyLocation }}"
+        src: "{{ hostvars['localhost']['local_public_key_location'] }}"
         dest: "{{ git_keys_folder }}"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
