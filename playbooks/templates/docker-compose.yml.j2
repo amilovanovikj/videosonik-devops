@@ -1,8 +1,9 @@
-version: "2"
+version: "2.2"
 
 services:
   {{ service_name }}:
     image: "{{ docker_registry_url }}/{{ service_name }}:latest"
+    scale: {{ num_containers }}
     expose:
       - "{{ service_port }}"
   nginx:

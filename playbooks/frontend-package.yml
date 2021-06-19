@@ -14,7 +14,7 @@
         key_file: "{{ git_key_file }}"
         accept_hostkey: yes
         version: master
-    - name: Template backend configuration
+    - name: Template frontend configuration
       template:
         src: custom-axios.js.j2
         dest: "/home/{{ ansible_user }}/videosonik-frontend/src/axios/custom-axios.js"

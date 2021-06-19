@@ -32,5 +32,3 @@
         pull: yes
         restarted: yes
         recreate: always
-        scale: 
-          videosonik-backend: "{{ num_containers }}"
