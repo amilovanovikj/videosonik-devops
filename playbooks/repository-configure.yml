@@ -49,9 +49,10 @@
         name: git-server
         image: jkarlos/git-server-docker
         state: started
+        restart: yes
         volumes:
-        - "{{ git_keys_folder }}"
-        - "{{ git_repos_folder }}"
+        - "{{ git_keys_folder }}:/git-server/keys"
+        - "{{ git_repos_folder }}:/git-server/repos"
         ports:
           - "2222:22"
       vars:
@@ -73,6 +74,7 @@
         name: docker-registry
         image: registry:2
         state: started
+        restart: yes
         volumes:
           - "/home/{{ ansible_user }}/docker-registry:/var/lib/registry"
         ports:
