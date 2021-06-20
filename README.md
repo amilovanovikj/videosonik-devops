@@ -2,7 +2,7 @@
 
 This repository contains Ansible and Docker scripts that automate the build and deploy process of a [Java Spring](https://github.com/amilovanovikj/videosonik-backend) and [React](https://github.com/amilovanovikj/videosonik-frontend) app, as well as Ansible scripts for automating the server configuration process. The original Java Spring backend app can be found at [vavramovski/videosonik-new](https://github.com/vavramovski/videosonik-new) and the original React frontend app can be found at [vavramovski/videosonik-frontend](https://github.com/vavramovski/videosonik-frontend). 
 
-Huge thanks to [vavramovski](https://github.com/vavramovski) for letting me use these two apps for my project.
+Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me use these two apps for my project.
 
 ## What is implemented
 
@@ -26,3 +26,62 @@ Huge thanks to [vavramovski](https://github.com/vavramovski) for letting me use 
 - Various [Ansible templates](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks/templates) are used to inject variables at playbook runtime.
 - [Ansible vault](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks/vault) is used to store secret variables.
 
+## Replicate the setup
+
+In order to replicate the setup for running these scripts you would need Ansible 2.9 and Vagrant 2.2.14 installed on the host running these scripts.
+
+First, create a common folder and clone all three repos in it:
+```bash
+mkdir videosonik && cd videosonik
+git clone https://github.com/amilovanovikj/videosonik-backend.git
+git clone https://github.com/amilovanovikj/videosonik-devops.git
+git clone https://github.com/amilovanovikj/videosonik-frontend.git
+```
+Next, you will need to provision the 5 VMs using Vagrant:
+```bash
+cd videosonik-devops && vagrant up
+```
+After this command finishes you will have 5 CentOS 7 VMs up and running. You will first need to run the all-configure.yml playbook, followed by repository-configure.yml:
+```bash
+ansible-playbook playbooks/all-configure.yml
+ansible-playbook playbooks/repository-configure.yml
+```
+This sets the stage for working with the local Git and Docker server, as well as deploying to the frontend, backend and database servers. To have these repositories pushed to the local Git server use the following commands:
+```bash
+cd ..
+cd videosonik-backend && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-backend.git
+cd .. && git clone --bare videosonik-backend videosonik-backend.git
+scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-backend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+rm -rf videosonik-backend.git/
+cd videosonik-devops && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-devops.git
+cd .. && git clone --bare videosonik-devops videosonik-devops.git
+scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-devops.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+rm -rf videosonik-devops.git/
+cd videosonik-frontend && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-frontend.git
+cd .. && git clone --bare videosonik-frontend videosonik-frontend.git
+scp -i videosonik-frontend/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-frontend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+rm -rf videosonik-frontend.git/
+```
+The last configuration step is to run the following Ansible command to configure the build server:
+```bash
+cd videosonik-devops
+ansible-playbook playbooks/build-configure.yml
+``` 
+Now that all servers are set up and running, before building the app you must edit the [Ansible vault file](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/vault/secret-config.yml) (recreate with your own vault password) and specify the following variables:
+```yaml
+postgres_user:    *Username for the PostgreSQL connection*
+postgres_pass:    *Password for the PostgreSQL connection*
+admin_username:   *Username for the admin account on the Videosonik app*
+admin_password:   *Password for the admin account on the Videosonik app*
+admin_email:      *Email for the admin account on the Videosonik app*
+jwt_secret:       *The secret key used by JSON Web Token in Java app*
+```
+Finally, you are ready to build and deploy the application:
+```bash
+ansible-playbook playbooks/frontend-package.yml
+ansible-playbook --ask-vault-pass playbooks/backend-package.yml
+ansible-playbook --ask-vault-pass playbooks/database-deploy.yml
+ansible-playbook playbooks/backend-deploy.yml
+ansible-playbook playbooks/frontend-deploy.yml
+```
+That's it! You now have the Videosonik web store application deployed on multiple Docker containers. :grin:
