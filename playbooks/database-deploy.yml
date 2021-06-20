@@ -11,7 +11,7 @@
         mode: 0775
     - name: Load Postgres configuration variables from encrypted file
       include_vars:
-        file: vault/database-config.yml
+        file: vault/secret-config.yml
     - name: Run Postgres in Docker container
       docker_container:
         name: postgres

@@ -5,7 +5,7 @@
   tasks:
     - name: Load secret variables from encrypted file
       include_vars:
-        file: vault/database-config.yml
+        file: vault/secret-config.yml
     - name: Clean workspace
       file:
         path: /home/{{ ansible_user }}/videosonik-backend
