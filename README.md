@@ -53,13 +53,15 @@ cd videosonik-backend && git remote add origin ssh://git@192.168.32.14:2222/git-
 cd .. && git clone --bare videosonik-backend videosonik-backend.git
 scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-backend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-backend.git/
+
 cd videosonik-devops && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-devops.git
 cd .. && git clone --bare videosonik-devops videosonik-devops.git
 scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-devops.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-devops.git/
+
 cd videosonik-frontend && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-frontend.git
 cd .. && git clone --bare videosonik-frontend videosonik-frontend.git
-scp -i videosonik-frontend/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-frontend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-frontend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-frontend.git/
 ```
 The last configuration step is to run the following Ansible command to configure the build server:
@@ -74,7 +76,7 @@ postgres_pass:    *Password for the PostgreSQL connection*
 admin_username:   *Username for the admin account on the Videosonik app*
 admin_password:   *Password for the admin account on the Videosonik app*
 admin_email:      *Email for the admin account on the Videosonik app*
-jwt_secret:       *The secret key used by JSON Web Token in Java app*
+jwt_secret:       *The secret key used by the JSON Web Token in Java*
 ```
 Finally, you are ready to build and deploy the application:
 ```bash
