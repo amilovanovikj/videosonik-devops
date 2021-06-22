@@ -3,7 +3,7 @@ jwt.secret={{ jwt_secret }}
 spring.jpa.properties.hibernate.format_sql=true
 
 ## PostgreSQL
-spring.datasource.url=jdbc:postgresql://{{ hostvars[groups['database'][0]]['ansible_host'] }}/videosonik
+spring.datasource.url=jdbc:postgresql://{{ database_hostname }}/{{ database_name }}
 spring.datasource.username={{ postgres_user }}
 spring.datasource.password={{ postgres_pass }}
 
