@@ -28,7 +28,8 @@ Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me u
 
 ## Replicate the setup
 
-In order to replicate the setup for running these scripts you would need Ansible 2.9 and Vagrant 2.2.14 installed on the host running these scripts.
+**Note**: In order to replicate the setup for running these scripts you would need Ansible 2.9 and Vagrant 2.2.14 installed on the host running these scripts (a Linux machine). Also, this setup requires a minimum of 8GB of RAM and 10GB free storage space.
+***
 
 First, create a common folder and clone all three repos in it:
 ```bash
@@ -49,19 +50,19 @@ ansible-playbook playbooks/repository-configure.yml
 This sets the stage for working with the local Git and Docker server, as well as deploying to the frontend, backend and database servers. To have these repositories pushed to the local Git server use the following commands:
 ```bash
 cd ..
-cd videosonik-backend && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-backend.git
+cd videosonik-backend && git remote set-url origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-backend.git
 cd .. && git clone --bare videosonik-backend videosonik-backend.git
-scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-backend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+yes | scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-backend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-backend.git/
 
-cd videosonik-devops && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-devops.git
+cd videosonik-devops && git remote set-url origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-devops.git
 cd .. && git clone --bare videosonik-devops videosonik-devops.git
-scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-devops.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+yes | scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-devops.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-devops.git/
 
-cd videosonik-frontend && git remote add origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-frontend.git
+cd videosonik-frontend && git remote set-url origin ssh://git@192.168.32.14:2222/git-server/repos/videosonik-frontend.git
 cd .. && git clone --bare videosonik-frontend videosonik-frontend.git
-scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-frontend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
+yes | scp -i videosonik-devops/.vagrant/machines/instance14/virtualbox/private_key -r videosonik-frontend.git/ vagrant@192.168.32.14:/home/vagrant/git-server/repos
 rm -rf videosonik-frontend.git/
 ```
 The last configuration step is to run the following Ansible command to configure the build server:
