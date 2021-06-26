@@ -7,6 +7,7 @@ Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me u
 ## What is implemented
 
 - All package and deploy operations for the two apps, as well as server setup, are done using [Ansible playbooks](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks).
+- Docker images (that utilize multi-stage builds) are created for both the [backend](https://github.com/amilovanovikj/videosonik-backend/blob/master/Dockerfile) and [frontend](https://github.com/amilovanovikj/videosonik-frontend/blob/master/Dockerfile) apps, and are deployed using [Docker compose](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks/templates/docker-compose.yml.j2) to multiple containers, load balanced by [Nginx](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/templates/nginx.conf.j2).
 - Five VMs (created using this [Vagrantfile](https://github.com/amilovanovikj/videosonik-devops/blob/master/Vagrantfile)) are used for hosting the five different types of servers:
   - **Backend**: The Java Spring backend web app.
   - **Frontend**: The React frontend web app.
