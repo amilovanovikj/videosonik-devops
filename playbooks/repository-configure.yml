@@ -1,6 +1,7 @@
 ---
 - name: Generate SSH key on local machine for Git servers
   hosts: localhost
+  become: no
   vars_prompt:
     - name: "ssh_key_name"
       prompt: "Enter the name of the SSH key for connecting to the Git server"
