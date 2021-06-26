@@ -42,6 +42,7 @@
         path: buffer/
         state: absent
       delegate_to: 127.0.0.1
+      become: no
   handlers:
     - name: Restart the Docker container of the Git server
       docker_container:
