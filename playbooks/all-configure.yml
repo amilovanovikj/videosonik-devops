@@ -26,6 +26,7 @@
         pip_install_packages:
           - name: docker
             version: 5.0.0
+          - name: six
     - name: Install Docker
       import_role:
         name: geerlingguy.docker
