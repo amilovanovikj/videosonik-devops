@@ -15,13 +15,14 @@ Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me u
   - **Repository**: The machine hosting a private Git server for the two apps and this repository, as well as a private Docker registry for the Docker images.
 - The Ansible playbooks include:
   - [all-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/all-configure.yml): Install Docker and Python SDK for Docker on all hosts, enable insecure communication with private Docker registry.
-  - [repository-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-configure.yml): Run Git server and Docker registry on the 'registry' host as Docker containers, set up SSH communication between Ansible master and Git server.
   - [build-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/build-configure.yml): Install Git on the 'build' host and set up SSH communication to the private Git server.
-  - [database-deploy.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/database-deploy.yml): Run the PostgreSQL service on the 'database' host in a Docker container, create the necessary database and user for database access. These properties are hidden in an Ansible vault file.
+  - [repository-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-configure.yml): Run Git server and Docker registry on the 'registry' host as Docker containers, set up SSH communication between Ansible master and Git server.
+  - [repository-restart.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-restart.yml): Restart the Docker containers of the private Git server and Docker registry.
   - [frontend-package.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/frontend-package.yml): Pull frontend repository from private Git server, use Jinja2 templates to change default app configuration, build a Docker image from the frontend app and push it to the private Docker registry. Runs on 'build' host.
   - [backend-package.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/backend-package.yml): Pull backend repository from private Git server, use Jinja2 templates to change default app configuration, build a Docker image from the backend app and push it to the private Docker registry. Runs on 'build' host.
   - [frontend-deploy.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/frontend-deploy.yml): Deploy a Docker container of the frontend app on the 'frontend' host from the previously built Docker image, using Docker compose. Multiple instances of the app are started, alongside an Nginx load balancer to distribute the traffic between them.
   - [backend-deploy.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/backend-deploy.yml): Deploy a Docker container of the backend app on the 'backend' host from the previously built Docker image, using Docker compose. Multiple instances of the app are started, alongside an Nginx load balancer to distribute the traffic between them.
+  - [database-deploy.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/database-deploy.yml): Run the PostgreSQL service on the 'database' host in a Docker container, create the necessary database and user for database access. These properties are hidden in an Ansible vault file.
 - [Ansible roles](https://github.com/amilovanovikj/videosonik-devops/tree/master/roles) are used for installing Docker, Git and other auxilary packages on the servers.
 - Various [Ansible templates](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks/templates) are used to inject variables at playbook runtime.
 - [Ansible vault](https://github.com/amilovanovikj/videosonik-devops/tree/master/playbooks/vault) is used to store secret variables.
@@ -87,4 +88,12 @@ ansible-playbook --ask-vault-pass playbooks/database-deploy.yml
 ansible-playbook playbooks/backend-deploy.yml
 ansible-playbook playbooks/frontend-deploy.yml
 ```
+Note that if you make any changes to the frontend or backend apps, you will have to push them to the private Git repositories and run the package and deploy scripts once more.
+
+Additionally, if you don't destroy the VMs after use, next time you want to start the application you can use the [repository restart playbook](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-restart.yml) to start the Docker container of local Git server and Docker registry:
+```bash
+ansible-playbook playbooks/repository-restart.yml
+```
+If you ever restart the VMs, you'll be able to package and deploy the apps only after running this playbook. 
+
 That's it! You now have the Videosonik web store application deployed on multiple Docker containers. :grin:
