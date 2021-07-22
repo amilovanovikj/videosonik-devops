@@ -2,7 +2,7 @@
 
 This repository contains Ansible and Docker scripts that automate the build and deploy process of a [Java Spring](https://github.com/amilovanovikj/videosonik-backend) and [React](https://github.com/amilovanovikj/videosonik-frontend) app, as well as Ansible scripts for automating the server configuration process. The original Java Spring backend app can be found at [vavramovski/videosonik-new](https://github.com/vavramovski/videosonik-new) and the original React frontend app can be found at [vavramovski/videosonik-frontend](https://github.com/vavramovski/videosonik-frontend). 
 
-Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me use these two apps for my project.
+Huge thanks to [vavramovski](https://github.com/vavramovski) for letting me use these two apps for my project.
 
 ## What is implemented
 
@@ -13,7 +13,7 @@ Huge thank you to [vavramovski](https://github.com/vavramovski) for letting me u
   - **Frontend**: The React frontend web app.
   - **Database**: The PostgreSQL database for the backend app.
   - **Build**: The server used to build the Docker images from the Git repositories of the apps and push them to a private Docker registry.
-  - **Repository**: The machine hosting a private Git server for the two apps and this repository, as well as a private Docker registry for the Docker images.
+  - **Repository**: The machine hosting a private Docker registry for the Docker images, as well as a private Git server for this repository and the repositories for the FE and BE apps.
 - The Ansible playbooks include:
   - [all-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/all-configure.yml): Install Docker and Python SDK for Docker on all hosts, enable insecure communication with private Docker registry.
   - [build-configure.yml](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/build-configure.yml): Install Git on the 'build' host and set up SSH communication to the private Git server.
@@ -91,7 +91,7 @@ ansible-playbook playbooks/frontend-deploy.yml
 ```
 Note that if you make any changes to the frontend or backend apps, you will have to push them to the private Git repositories and run the package and deploy scripts once more.
 
-Additionally, if you don't destroy the VMs after use, next time you want to start the application you can use the [repository restart playbook](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-restart.yml) to start the Docker container of local Git server and Docker registry:
+Additionally, if you don't destroy the VMs after use, next time you want to start the application you can use the [repository restart playbook](https://github.com/amilovanovikj/videosonik-devops/blob/master/playbooks/repository-restart.yml) to start the Docker containers for the local Git server and Docker registry:
 ```bash
 ansible-playbook playbooks/repository-restart.yml
 ```
